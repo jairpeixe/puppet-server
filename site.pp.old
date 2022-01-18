@@ -1,0 +1,361 @@
+node "default" {
+  
+  include apt
+  #include unattended_upgrades
+
+  #class { 'apt':
+  #  purge_sources_list_d => true
+  #}
+
+  class { 'ntp':
+    servers =>  ['a.st1.ntp.br','b.st1.ntp.br','c.st1.ntp.br','d.st1.ntp.br','a.ntp.br','b.ntp.br','c.ntp.br','gps.ntp.br']
+  }
+
+  class { '::mysql::server':
+    root_password           => 'root',
+    remove_default_accounts => true,
+    override_options        => $override_options
+  }
+
+  apt::source { 'google_chrome':
+    #purge    => true,
+    comment  => 'Navegador Google Chrome',
+    location => '[arch=amd64] http://dl.google.com/linux/chrome/deb/',
+    release  => 'stable',
+    repos    => 'main',
+    key      => {
+      'id'     => '4CCA1EAF950CEE4AB83976DCA040830F7FAC5991', 
+      'source' => 'https://dl.google.com/linux/linux_signing_key.pub',
+    },
+    include  => {
+      'deb' => true,
+      'src' => false,
+    },
+  }
+
+  #apt::source { 'sublime-text3':
+  #  comment 	 => 'Sublime Text 3',
+  #  location	 => 'deb https://download.sublimetext.com/',
+  #  release	 => 'apt/stable'
+  #}
+  
+  apt::ppa {
+   'ppa:maarten-fonville/android-studio':
+  }
+
+  apt::ppa {
+    'ppa:otto-kesselgulasch/gimp':
+  }
+
+  apt::ppa {
+    'ppa:inkscape.dev/stable':
+  }
+
+  apt::ppa {
+    'ppa:danielrichter2007/grub-customizer':
+  }
+
+
+  user { 'aluno':
+    ensure      =>  'present',
+    managehome  =>  'true',
+    password    =>  '$6$d9I8S//p$mmj6czqKoVmv/BO/vrRoQMvLmxkY50C8pH9GzA2mub9d4P6e8DVL483WcmhQE72Y2Gu70qeBzY8ykx7kJSw9N.'
+  }
+  
+  package { 'vim':
+    ensure      => 'latest',
+  }
+  
+  package { 'codeblocks':
+    ensure => 'latest',
+  }
+
+  package { 'openssh-server':
+    ensure => 'latest',
+  }
+
+  package { 'composer':
+    ensure => 'latest',
+  }
+  
+  package { 'nodejs':
+    ensure => 'latest',
+  }
+  
+  package { 'android-studio':
+    ensure => 'latest',
+    require => Class['apt::update'],
+  }
+
+  package { 'gimp':
+    ensure => 'latest',
+    require => Class['apt::update'],
+  }
+
+  package { 'inkscape':
+    ensure => 'latest',
+    require => Class['apt::update'],
+  }
+
+  package { 'grub-customizer':
+    ensure => 'latest',
+    require => Class['apt::update'],
+  }
+
+  package { 'qemu-kvm':
+    ensure => 'latest',
+  }
+
+  package { 'libvirt-bin':
+    ensure => 'latest',
+  }
+
+  package { 'ubuntu-vm-builder':
+    ensure => 'latest',
+  }
+
+  package { 'bridge-utils':
+    ensure => 'latest',
+  }
+
+  package { 'openjdk-8-jdk':
+    ensure => 'latest',
+  }
+
+  package { 'gnome-tweak-tool':
+    ensure => 'latest',
+  }
+   package { 'idle3':
+    ensure => 'latest',
+   }
+
+  package { 'google-chrome-stable':
+    ensure => 'latest',
+    require =>  Class['apt::update'],
+  }
+
+  package { 'audacity':
+    ensure  => 'latest',
+  }
+
+  package { 'lazarus':
+    ensure => 'latest',
+  }
+
+  package { 'phpmyadmin':
+    ensure => 'latest',
+  }
+
+  package { 'mysql-workbench':
+    ensure => 'latest',
+  }
+
+  service { 'sshd':
+    hasstatus => 'true',
+    enable    => 'true',
+    ensure    => 'running',
+  }
+
+}
+
+node lab4-maq27,
+     lab4-maq25 {
+    include chocolatey
+    
+    package { 'geogebra-classic.install':
+	ensure    => 'latest',
+        provider  => chocolatey,
+    }
+    
+    package { 'python':
+	ensure    => '3.10.0',
+	provider  => chocolatey,
+    }
+}
+
+node
+    lab5-prof {
+
+    $packages = ['googlechrome', 'adobereader', 'firefox']    
+
+    include chocolatey    
+    
+    user { 'ADMIN':
+	ensure	    => 'present',
+	password    => 'winlinux2018',
+    }
+
+    user { 'Professor':
+	name	    => 'Professor',
+	ensure	    => 'present',
+    }
+   
+    $packages.each |String $packages| {
+    	package { "${packages}":
+            ensure	    => 'latest',
+            provider        => chocolatey,
+    	}
+    }
+
+    file { 'FluidsimH':
+	path    => 'C:\Users\ADMIN\Desktop\FluidSIM Hydraulics.lnk',
+	ensure  => 'file',
+	source	=> 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Festo Didactic\FluidSIM Hydraulics V 4.0 Demo Version English.lnk',
+	require	=> Package['FluidSIM 4.0 Hydraulics Demo Version']
+    }
+
+    package { 'FluidSIM 4.0 Hydraulics Demo Version':
+        ensure	    => 'installed',
+        source      => '\\\10.0.100.150\Installers\demo001h4.exe',
+	install_options     => ["/S", "/Y"],
+    }
+
+    file { 'FluidsimP':
+	path    => 'C:\Users\ADMIN\Desktop\FluidSIM Pneumatics.lnk',
+	ensure  => 'file',
+	source	=> 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Festo Didactic\FluidSIM Pneumatics V 4.0 Demo Version English.lnk',
+	require	=> Package['FluidSIM 4.0 Pneumatics Demo Version']
+    }
+
+    package { 'FluidSIM 4.0 Pneumatics Demo Version':
+        ensure	    => 'installed',
+        source      => '\\\10.0.100.150\Installers\demo001p4.exe',
+        install_options     => ["/S", "/Y"],
+    }
+
+}
+
+node
+    lab5-maq1,
+    lab5-maq2,
+    lab5-maq3,
+    lab5-maq4,
+    lab5-maq5,
+    lab5-maq6,
+    lab5-maq7,
+    lab5-maq8,
+    lab5-maq9,
+    lab5-maq10,
+    lab5-maq11,
+    lab5-maq12,
+    lab5-maq13,
+    lab5-maq14,
+    lab5-maq15,
+    lab5-maq16,
+    lab5-maq20,
+    lab5-maq25,
+    lab5-maq26,
+    lab5-maq30
+    
+    {
+
+    include chocolatey
+    
+    user { 'Admin':
+	ensure	   => 'present',
+	password   => '#winlinux2021#'
+    }    
+
+    user { 'Alunos':
+	name	   => 'Alunos',
+	ensure	   => 'present',
+    }    
+    
+#    package { 'FluidSIM 4.0 Hydraulics Demo Version':
+#        ensure	    => 'installed',
+#        source      => '\\\10.0.100.150\Installers\demo001h4.exe',
+#    }
+
+    #package { 'adobereader':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'googlechrome':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'libreoffice-fresh':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { '7zip':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'python':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'codeblocks':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'firefox':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'inkscape':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'gimp':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'vcredist-all':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'vscode':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'git':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+    #
+
+    #package { 'sublimetext3':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'blender':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'mysql.workbench':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'github-desktop':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #package { 'pgadmin4':
+    #    ensure	    => 'latest',
+    #    provider    => chocolatey,
+    #}
+
+    #exec { 'CodeBlocks.lnk':
+    #    command     => 'C:\Windows\System32\cmd.exe /c copy /Y C:\ProgramData\Microsoft\Windows\Start Menu\Programs\CodeBlocks\CodeBlocks.lnk C:\Users\Aluno\Desktop\CodeBlocks.lnk',
+    #	require     => Package['codeblocks'],
+    #}
+
+
+}
