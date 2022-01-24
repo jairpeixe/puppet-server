@@ -134,7 +134,48 @@ node
     $codeblocks_version='codeblocks'
     $codeblocks_lnk='CodeBlocks.lnk'
 
-    # pasta compartilhada com todos os execáveis de todas as versões
+    # Instalação Visual Studio 2022
+    # Pasta com os arquivos da instalação offline
+    $vsoffline='vsoffline2022'
+    # Versão do programa Instalado
+    $vs_version='Visual Studio Community 2022'
+    # Visual Studio Installler Community exe
+    $vs_exe='vs_Community.exe'
+    
+    # Sublime text build 4
+    $sublime_version='Sublime Text'
+    # Sublime exe
+    $sublime_exe='sublime_text_build_4126_x64_setup.exe'
+
+    # Nodejs install
+    $node_version='Node.js'
+    # Node msi 
+    $node_msi='node-v16.13.2-x64.msi'
+
+    # Instalação da IDE de programação Lazarus com freepascal
+    $lazarus_version='Lazarus 2.2.0'
+    # Executável do Lazarus
+    $lazarus_exe='lazarus-2.2.0-fpc-3.2.2-win64.exe'
+
+    # Instalação do Tile Studio Versão I e II, instalção através de arquivos zip, requer obrigatóriamente a instalação do 7zip, usando a declaração require no resource archive
+    $tilei_zip='ts.zip'
+    $install_tsI_path='C:\Program Files\tsI'
+    $install_tsII_path='C:\Program Files\tsII'
+    $tileii_zip='ts-2.55-bin.zip'
+
+    # Instalação do postgresql server
+    $postgre_version='PostgreSQL 14 '
+    $postgre_exe='postgresql-14.1-1-windows-x64.exe'
+
+    # Instalação do PGAdmin para gerenciamento do banco de dados postgresql
+    $pgadmin_version='pgAdmin 4 version 6.4'
+    $pgadmin_exe='pgadmin4-6.4-x64.exe'
+
+    # Xampp installation
+    $xampp_version='XAMPP'
+    $xampp_exe='xampp-windows-x64-8.1.1-2-VS16-installer.exe'
+
+    # pasta compartilhada com todos os executáveis de todas as versões do visual c++ redistribuível.
     $vc_folder='vcredist'
 
     # Instalação dos pacotes Microsoft Visual C++ Redistribuíveis.
@@ -174,6 +215,54 @@ node
             source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${vc_folder}\\${exe}", 
             install_options  => ["/install", "/quiet", "/norestart"],
         }
+    }
+
+    package { "${postgre_version}":
+            ensure	    => 'installed',
+            source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${postgre_exe}", 
+            install_options  => [ '--mode', 'unattended', '--unattendedmodeui', 'none', '--superaccount', 'root', '--superpassword', 'root'],
+    }
+    
+    package { "${pgadmin_version}":
+            ensure	    => 'installed',
+            source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${pgadmin_exe}", 
+            install_options  => ["/VERYSILENT", "/NORESTART", "/ALLUSERS"],
+    }
+    
+    file { 'pgadmin_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\pgAdmin 4 v6.lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\pgAdmin 4 v6.lnk",
+        require     => Package["${pgadmin_version}"],
+    }
+
+    #package { "${xampp_version}":
+    #        ensure	    => 'installed',
+    #        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${xampp_exe}", 
+    #        #install_options  => ["--mode unattended", "--disable-components xampp_mysql, xampp_filezilla, xampp_mercury, xampp_tomcat, xampp_perl, xampp_webalizer, xampp_sendmail", "--launchapps 0"],
+    #}
+    
+    package { "${node_version}":
+            ensure	    => 'installed',
+            source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${node_msi}", 
+            install_options  => ["/qn"],
+    }
+    
+    file { 'node_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\Node.js.lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\Node.js.lnk",
+        require     => Package["${node_version}"],
+    }
+
+    package { "${lazarus_version}":
+            ensure	    => 'installed',
+            source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${lazarus_exe}", 
+            install_options  => ["/VERYSILENT", "/NORESTART"],
+    }
+    
+    file { 'lazarus_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\Lazarus IDE.lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\Lazarus.lnk",
+        require     => Package["${lazarus_version}"],
     }
 
     package { "${vc_zcsq_version}":
@@ -217,6 +306,24 @@ node
         install_options     => ["/sAll", "/rs", "/msi", "EULA_ACCEPT=YES"],
     }
 
+    package { "${sublime_version}":
+        ensure      => 'installed',
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${sublime_exe}",
+        install_options     => ["/VERYSILENT", "/NORESTART", "/TASKS=contextentry"],
+    }
+
+    file { 'sublime_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\Sublime Text.lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\Sublime Text.lnk",
+        require     => Package["${sublime_version}"],
+    }
+
+    package { "${vs_version}":
+        ensure      => 'installed',
+        source      => "\\\\${shared_srv}\\${installers_path}\\${vsoffline}\\${vs_exe}",
+        install_options     => ["-q", "--norestart", "--includeRecommended", "--installWhileDownloading", "--add", "Microsoft.VisualStudio.Workload.ManagedDesktop", "--add", "Microsoft.VisualStudio.Workload.ManagedGame", "--add", "Microsoft.VisualStudio.Workload.NativeDesktop", "--add", "Microsoft.VisualStudio.Workload.NativeGame", "--add", "Microsoft.VisualStudio.Workload.NativeMobile", "--add", "Microsoft.VisualStudio.Workload.NetCrossPlat", "--add", "Microsoft.VisualStudio.Workload.NetWeb", "--add", "Microsoft.VisualStudio.Workload.Node", "--add", "Microsoft.VisualStudio.Workload.Python", "--add", "Microsoft.VisualStudio.Workload.Universal"],
+    }
+
     #package { "${codeblocks_version}":
     #    ensure      => 'installed',
     #    source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${codeblocks_exe}",
@@ -241,6 +348,44 @@ node
         install_options     => ["ALLUSERS=1", "/qn"],
     }
 
+    #file { 'tsI':
+	#    ensure	    => 'directory',
+	#    path	    => "${install_tsI_path}",
+    #}
+    #
+    #archive { 'tilestudioI':
+    #    path        => "C:\\Users\\${u_alunos}\\AppData\\Local\\${tilei_zip}",
+    #    ensure      => present,
+    #    extract     => true,
+    #    extract_path    => "${install_tsI_path}",
+    #    source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${tilei_zip}", 
+    #    cleanup     => true,
+    #    temp_dir    => "C:\\Users\\${u_alunos}\\AppData\\Local\\Temp",
+    #    require     => [ Package["${zip_version}"], File['tsI'] ],      
+    #}
+
+    file { 'tsII':
+	    ensure	    => 'directory',
+	    path	    => "${install_tsII_path}",
+    }
+    
+    archive { 'tilestudioII':
+        path        => "C:\\Users\\${u_alunos}\\AppData\\Local\\${tileii_zip}",
+        ensure      => present,
+        extract     => true,
+        extract_path    => "${install_tsII_path}",
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${tileii_zip}", 
+        cleanup     => true,
+        temp_dir    => "C:\\Users\\${u_alunos}\\AppData\\Local\\Temp",
+        require     => [ Package["${zip_version}"], File['tsII'] ],       
+    }
+
+    file { 'tileII_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\Tile Studio II.lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\Tile Studio II.lnk",
+        require     => File['tsII'],
+    }
+
     archive { 'openjdk':
         path        => "C:\\Users\\${u_alunos}\\AppData\\Local\\${openjdk_zip}",
         ensure      => present,
@@ -255,8 +400,14 @@ node
     windows_env { "JAVA_HOME=C:\\Program Files\\Java\\${openjdk_version}":
         mergemode   => clobber,
     }
-
+    
+    # Adicionando o caminho do JDK para os executáveis na váriavel de ambiente path
     windows_env { "PATH=C:\\Program Files\\Java\\${openjdk_version}\\bin": 
+
+    }
+
+    # Adicionando o caminho do FreePascal para os executáveis na váriavel de ambiente path
+    windows_env { "PATH=C:\\lazarus\\fpc\\3.2.2\\bin\\x86_64-win64": 
 
     }
 
@@ -287,7 +438,7 @@ node
     file { 'noteplus_lnk':
         path        => "C:\\Users\\${u_alunos}\\Desktop\\Notepad++.lnk",    
         source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\Notepad++.lnk",
-        require     => Package["${git_version}"],
+        require     => Package["${noteplus_version}"],
     }
 
     file { 'DEV-C++':
