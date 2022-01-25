@@ -179,6 +179,10 @@ node
     $python_exe='python-3.10.2-amd64.exe'
     $python_version='Python 3.10.2 (64-bit)'
 
+    # Arquivos para instalação do violet UML editor, não requer instalção normal, somente a cópia do executável e cópia do atalho para área de trabalho.
+    $violet_exe='violetumleditor-2.1.0.exe'
+    $violet_folder="C:\\Program Files\\Violet"
+
     # pasta compartilhada com todos os executáveis de todas as versões do visual c++ redistribuível.
     $vc_folder='vcredist'
 
@@ -221,10 +225,31 @@ node
         }
     }
 
+    # Criação do diretório para instalação do violet
+    file { 'violet':
+        ensure	    => 'directory',
+	    path	    => "${violet_folder}",
+    }
+    
+    # Cópia do arquivo executável do violet para a pasta
+    file { 'violet_install':
+	    ensure	    => 'file',
+	    path	    => "${violet_folder}\\${violet_exe}",
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${violet_exe}", 
+        require     => File['violet'],
+    }
+   
+    # Criação do atalho na área de trabalho
+    file { 'violet_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\Violet UML Editor.lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\Violet UML Editor.lnk",
+        require     => File['violet_install'],
+    }
+
     package { "${python_version}":
-            ensure	    => 'installed',
-            source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${python_exe}", 
-            install_options  => [ '/quiet', 'InstallAllUsers=1', 'PrependPath=1'],
+        ensure	    => 'installed',
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${python_exe}", 
+        install_options  => [ '/quiet', 'InstallAllUsers=1', 'PrependPath=1'],
     }
     
     # Atalho para IDLE pyhton
