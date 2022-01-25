@@ -112,10 +112,10 @@ node
     $acro_version='Adobe Acrobat Reader DC - Português'
 
     # instalação do java runtime X86 e x64 - Obs: td = trinta e dois bits, sq = sessenta e quatro bits
-    $java_td_exe='jre-8u311-windows-i586.exe'
-    $java_sq_exe='jre-8u311-windows-x64.exe'
-    $java_td_version='Java 8 Update 311'
-    $java_sq_version='Java 8 Update 311 (64-bit)'
+    $java_td_exe='jre-8u321-windows-i586.exe'
+    $java_sq_exe='jre-8u321-windows-x64.exe'
+    $java_td_version='Java 8 Update 321'
+    $java_sq_version='Java 8 Update 321 (64-bit)'
 
     # Instalação do OpenJDK, ambiente de desenvolvimento do Java - Obs: Instalação do arquivo zipado, requer a instalação do 7zip antes.
     $openjdk_zip='openjdk-17.0.1_windows-x64_bin.zip'
@@ -175,6 +175,10 @@ node
     $xampp_version='XAMPP'
     $xampp_exe='xampp-windows-x64-8.1.1-2-VS16-installer.exe'
 
+    # Instalação do python 3.10.2
+    $python_exe='python-3.10.2-amd64.exe'
+    $python_version='Python 3.10.2 (64-bit)'
+
     # pasta compartilhada com todos os executáveis de todas as versões do visual c++ redistribuível.
     $vc_folder='vcredist'
 
@@ -215,6 +219,26 @@ node
             source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${vc_folder}\\${exe}", 
             install_options  => ["/install", "/quiet", "/norestart"],
         }
+    }
+
+    package { "${python_version}":
+            ensure	    => 'installed',
+            source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${python_exe}", 
+            install_options  => [ '/quiet', 'InstallAllUsers=1', 'PrependPath=1'],
+    }
+    
+    # Atalho para IDLE pyhton
+    file { 'py_idle_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\IDLE (Python 3.10 64-bit).lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\IDLE (Python 3.10 64-bit).lnk",
+        require     => Package["${python_version}"],
+    }
+
+    # Atalho para a linha de comando do interpretador python
+    file { 'python_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\Python 3.10 (64-bit).lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\Python 3.10 (64-bit).lnk",
+        require     => Package["${python_version}"],
     }
 
     package { "${postgre_version}":
@@ -322,6 +346,13 @@ node
         ensure      => 'installed',
         source      => "\\\\${shared_srv}\\${installers_path}\\${vsoffline}\\${vs_exe}",
         install_options     => ["-q", "--norestart", "--includeRecommended", "--installWhileDownloading", "--add", "Microsoft.VisualStudio.Workload.ManagedDesktop", "--add", "Microsoft.VisualStudio.Workload.ManagedGame", "--add", "Microsoft.VisualStudio.Workload.NativeDesktop", "--add", "Microsoft.VisualStudio.Workload.NativeGame", "--add", "Microsoft.VisualStudio.Workload.NativeMobile", "--add", "Microsoft.VisualStudio.Workload.NetCrossPlat", "--add", "Microsoft.VisualStudio.Workload.NetWeb", "--add", "Microsoft.VisualStudio.Workload.Node", "--add", "Microsoft.VisualStudio.Workload.Python", "--add", "Microsoft.VisualStudio.Workload.Universal"],
+    }
+
+    # Atalho da área de trabalho visual studio 2022
+    file { 'vs_lnk':
+        path        => "C:\\Users\\${u_alunos}\\Desktop\\Visual Studio 2022.lnk",    
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\Visual Studio 2022.lnk",
+        require     => Package["${vs_version}"],
     }
 
     #package { "${codeblocks_version}":
