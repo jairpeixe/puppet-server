@@ -287,7 +287,7 @@ node
     #package { "${xampp_version}":
     #        ensure	    => 'installed',
     #        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${xampp_exe}", 
-    #        #install_options  => ["--mode unattended", "--disable-components xampp_mysql, xampp_filezilla, xampp_mercury, xampp_tomcat, xampp_perl, xampp_webalizer, xampp_sendmail", "--launchapps 0"],
+    #        #install_options  => ["--mode", "unattended", "--disable-components", "xampp_mysql,", "xampp_filezilla,", "xampp_mercury,", "xampp_tomcat,", "xampp_perl,","xampp_webalizer,", "xampp_sendmail", "--launchapps", "0"],
     #}
     
     package { "${node_version}":
