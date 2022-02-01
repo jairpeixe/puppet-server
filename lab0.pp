@@ -14,11 +14,11 @@ node
     $u_alunos='Aluno'
     $u_admin='Admin'
 
-    $vb_exe='VirtualBox-6.1.30-148432-Win.exe'
+    $vb_exe='VirtualBox-6.1.32-149290-Win.exe'
     $shared_srv='10.0.100.150'
     $installers_path='Installers'
     $lab='lab0'
-    $vb_version='Oracle VM VirtualBox 6.1.30'
+    $vb_version='Oracle VM VirtualBox 6.1.32'
     $libre_msi='LibreOffice_7.2.4_Win_x64.msi'
     $libre_version='LibreOffice 7.2.4.1'
     $vagrant_exe='vagrant_2.2.19_x86_64.msi'
