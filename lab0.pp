@@ -1,5 +1,22 @@
 node 
-    /^lab0-maq\d+$/
+    #lab0-maq\d+/
+    lab0-maq1,
+    lab0-maq2,
+    lab0-maq3,
+    lab0-maq4,
+    lab0-maq5,
+    lab0-maq6,
+    lab0-maq7,
+    lab0-maq8,
+    lab0-maq9,
+    lab0-maq10,
+    lab0-maq11,
+    lab0-maq12,
+    lab0-maq13,
+    lab0-maq14,
+    lab0-maq15, 
+    lab0-maq16,
+    lab0-maq17
     {
 
     class { '::puppet_agent':
