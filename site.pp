@@ -3,10 +3,6 @@ node "default" {
   include apt
   #include unattended_upgrades
 
-  #class { 'apt':
-  #  purge_sources_list_d => true
-  #}
-
   class { 'ntp':
     servers =>  ['a.st1.ntp.br','b.st1.ntp.br','c.st1.ntp.br','d.st1.ntp.br','a.ntp.br','b.ntp.br','c.ntp.br','gps.ntp.br']
   }
@@ -17,7 +13,6 @@ node "default" {
   }
 
   apt::source { 'google_chrome':
-    #purge    => true,
     comment  => 'Navegador Google Chrome',
     location => '[arch=amd64] http://dl.google.com/linux/chrome/deb/',
     release  => 'stable',
@@ -105,13 +100,9 @@ node "default" {
     ensure => 'latest',
   }
 
-  package { 'libvirt-bin':
-    ensure => 'latest',
-  }
-
-  package { 'ubuntu-vm-builder':
-    ensure => 'latest',
-  }
+  #package { 'libvirt-bin':
+  #  ensure => 'latest',
+  #}
 
   package { 'bridge-utils':
     ensure => 'latest',
@@ -145,9 +136,9 @@ node "default" {
     ensure => 'latest',
   }
 
-  package { 'mysql-workbench':
-    ensure => 'latest',
-  }
+  #package { 'mysql-workbench':
+  #  ensure => 'latest',
+  #}
 
   service { 'sshd':
     hasstatus => 'true',
