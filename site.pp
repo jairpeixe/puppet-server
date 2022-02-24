@@ -26,6 +26,24 @@ node "default" {
       'src' => false,
     },
   }
+    apt::source { 'puppetlabs':
+        location => 'http://apt.puppetlabs.com',
+        repos    => 'main',
+        key      => {
+            'id'     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
+            'server' => 'pgp.mit.edu',
+        },
+    }
+
+    apt::source { 'webmin':
+        location => 'https://download.webmin.com/download/repository',
+        release  => 'sarge',
+        repos    => 'contrib',
+        key      => {
+            'id'     => '1719003ACE3E5A41E2DE70DFD97A3AE911F63C51',
+            'server' => 'pgp.mit.edu',
+        },
+    }
 
   #apt::source { 'sublime-text3':
   #  comment 	 => 'Sublime Text 3',

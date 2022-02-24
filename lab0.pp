@@ -36,8 +36,8 @@ node
     $installers_path='Installers'
     $lab='lab0'
     $vb_version='Oracle VM VirtualBox 6.1.32'
-    $libre_msi='LibreOffice_7.2.4_Win_x64.msi'
-    $libre_version='LibreOffice 7.2.4.1'
+    $libre_msi='LibreOffice_7.3.0_Win_x64.msi'
+    $libre_version='LibreOffice 7.3.0.3'
     $vagrant_exe='vagrant_2.2.19_x86_64.msi'
     $vagrant_version='Vagrant'
     $common='common'
@@ -59,6 +59,23 @@ node
     $ink_msi='inkscape-1.1.1.msi'
     $ink_version='Inkscape'
 
+    # Instalção Cisco Packet Tracer 
+    $ciscopt_exe='Packet Tracer 7.1.1 for Windows 64 bit.exe'
+    $ciscopt_version='Cisco Packet Tracer 7.1.1 64Bit'
+
+    package { "${ciscopt_version}":
+        ensure      => 'installed',
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${ciscopt_exe}",
+        install_options     => ["/VERYSILENT", "/NORESTART"],
+    }
+
+    file { 'CiscoPT.lnk':
+	    path        => 'C:\Users\Aluno\Desktop\Cisco Packet Tracer.lnk',
+	    ensure      => 'file',
+	    source	    => "\\\\${shared_srv}\\${installers_path}\\${common}\\Cisco Packet Tracer.lnk",
+	    require	    => Package["${ciscopt_version}"],
+    }
+
     package { 'python':
         ensure      => 'latest',
         provider    => chocolatey,
@@ -73,7 +90,7 @@ node
 
     package { "${vb_version}":
         ensure      => 'installed',
-        source      => "\\\\${shared_srv}\\${installers_path}\\${lab}\\${vb_exe}",
+        source      => "\\\\${shared_srv}\\${installers_path}\\${common}\\${vb_exe}",
         install_options     => ["--silent"],
     }
 
